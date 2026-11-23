@@ -1,0 +1,62 @@
+КОМАНДА: python -m unittest discover -v
+============================================================
+test_bad_duration_raises (test_enrollment.TestDurationAndReadOnly) ... ok
+test_duration_change_is_logged (test_enrollment.TestDurationAndReadOnly) ... ok
+test_identifier_and_email_are_read_only (test_enrollment.TestDurationAndReadOnly) ... ok
+test_to_dict (test_enrollment.TestDurationAndReadOnly) ... ok
+test_each_object_has_own_history (test_enrollment.TestHistory) ... ok
+test_history_records_are_independent (test_enrollment.TestHistory) ... ok
+test_history_returns_copy (test_enrollment.TestHistory) ... ok
+test_record_fields (test_enrollment.TestHistory) ... ok
+test_bad_initial_values_raise (test_enrollment.TestInitialization) ... ok
+test_empty_identifier_raises (test_enrollment.TestInitialization) ... ok
+test_inheritance (test_enrollment.TestInitialization) ... ok
+test_initial_state (test_enrollment.TestInitialization) ... ok
+test_values_are_normalized (test_enrollment.TestInitialization) ... ok
+test_allowed_chain (test_enrollment.TestStatusTransitions) ... ok
+test_same_status_does_not_add_record (test_enrollment.TestStatusTransitions) ... ok
+test_skip_status_is_forbidden (test_enrollment.TestStatusTransitions) ... ok
+test_terminal_status_is_final (test_enrollment.TestStatusTransitions) ... ok
+test_unknown_status_raises (test_enrollment.TestStatusTransitions) ... ok
+test_bug_empty_rows_break_average (test_report.TestBuggyReportReproduction) ... ok
+test_bug_find_by_status_mutates_input (test_report.TestBuggyReportReproduction) ... ok
+test_bug_null_duration_breaks_average (test_report.TestBuggyReportReproduction) ... ok
+test_bug_report_line_fails_on_non_string (test_report.TestBuggyReportReproduction) ... ok
+test_bug_top_courses_is_ascending (test_report.TestBuggyReportReproduction) ... ok
+test_average_all_null_returns_zero (test_report.TestFixedReport) ... ok
+test_average_empty_returns_zero (test_report.TestFixedReport) ... ok
+test_average_skips_null (test_report.TestFixedReport) ... ok
+test_find_by_status_does_not_mutate (test_report.TestFixedReport) ... ok
+test_load_closes_connection (test_report.TestFixedReport) ... ok
+test_load_enrollments_from_sqlite (test_report.TestFixedReport) ... ok
+test_report_line_handles_numbers_and_none (test_report.TestFixedReport) ... ok
+test_top_courses_is_descending (test_report.TestFixedReport) ... ok
+test_top_courses_tie_is_deterministic (test_report.TestFixedReport) ... ok
+test_all_errors_collected_not_only_first (test_validators.TestEnrollmentValidation) ... ok
+test_malformed_row_has_reason_message (test_validators.TestEnrollmentValidation) ... ok
+test_missing_field (test_validators.TestEnrollmentValidation) ... ok
+test_period_date_mismatch (test_validators.TestEnrollmentValidation) ... ok
+test_reason_messages_are_human_readable (test_validators.TestEnrollmentValidation) ... ok
+test_unknown_references (test_validators.TestEnrollmentValidation) ... ok
+test_valid_row_normalizes_values (test_validators.TestEnrollmentValidation) ... ok
+test_course_code (test_validators.TestIdentifiers) ... ok
+test_enrollment_id_named_groups (test_validators.TestIdentifiers) ... ok
+test_enrollment_id_rejects_lowercase_and_short_sequence (test_validators.TestIdentifiers) ... ok
+test_comma_inside_quotes_is_preserved (test_validators.TestNormalization) ... ok
+test_empty_and_whitespace_lines (test_validators.TestNormalization) ... ok
+test_full_audit_line (test_validators.TestNormalization) ... ok
+test_quote_backreference_replaces_pair (test_validators.TestNormalization) ... ok
+test_separators_collapse (test_validators.TestNormalization) ... ok
+test_spaces_collapse (test_validators.TestNormalization) ... ok
+test_unbalanced_quote_is_not_changed (test_validators.TestNormalization) ... ok
+test_real_batch_gives_ten_unique_valid_rows (test_validators.TestRealFiles) ... ok
+test_reference_files_are_readable (test_validators.TestRealFiles) ... ok
+test_date_format_and_calendar (test_validators.TestSimpleFields) ... ok
+test_duration_boundaries (test_validators.TestSimpleFields) ... ok
+test_email (test_validators.TestSimpleFields) ... ok
+test_status_and_format (test_validators.TestSimpleFields) ... ok
+
+----------------------------------------------------------------------
+Ran 55 tests in 0.016s
+
+OK

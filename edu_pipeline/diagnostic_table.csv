@@ -1,0 +1,5 @@
+﻿file,size_bytes,has_bom,utf8_decodes,cp1251_decodes,chosen_encoding,equals_reference,note
+names_utf8.txt,232,UTF-8 BOM,да,нет (character maps to <undefined> на позиции 4),utf-8-sig,True,эталон
+names_cp1251.txt,122,нет,нет (invalid continuation byte на позиции 0),да,cp1251,True,кандидат на сверку
+names_cp1251.txt (прочитан как latin-1),122,нет,нет,да,latin-1 (ошибочно),False,mojibake; обратное latin-1 -> cp1251 восстанавливает текст
+names_cp1251.txt (прочитан как utf-8),122,нет,нет (invalid start byte),да,utf-8 (ошибочно),False,UnicodeDecodeError — файл не читается совсем

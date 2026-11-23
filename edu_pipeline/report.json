@@ -1,0 +1,61 @@
+{
+  "report": "enrollments_by_course_status",
+  "rows": [
+    {
+      "course_code": "DA-200",
+      "status": "completed",
+      "enrollments": 1,
+      "hours": 48.0,
+      "revenue": 68000
+    },
+    {
+      "course_code": "DA-200",
+      "status": "on_review",
+      "enrollments": 1,
+      "hours": 48.0,
+      "revenue": 0
+    },
+    {
+      "course_code": "PY-100",
+      "status": "cancelled",
+      "enrollments": 1,
+      "hours": 36.0,
+      "revenue": 0
+    },
+    {
+      "course_code": "PY-100",
+      "status": "completed",
+      "enrollments": 1,
+      "hours": 36.0,
+      "revenue": 45000
+    },
+    {
+      "course_code": "PY-100",
+      "status": "enrolled",
+      "enrollments": 3,
+      "hours": 108.0,
+      "revenue": 135000
+    },
+    {
+      "course_code": "QA-150",
+      "status": "on_review",
+      "enrollments": 1,
+      "hours": 24.0,
+      "revenue": 0
+    },
+    {
+      "course_code": "WD-300",
+      "status": "enrolled",
+      "enrollments": 1,
+      "hours": 60.0,
+      "revenue": 84000
+    },
+    {
+      "course_code": "WD-300",
+      "status": "on_review",
+      "enrollments": 1,
+      "hours": 60.0,
+      "revenue": 0
+    }
+  ]
+}

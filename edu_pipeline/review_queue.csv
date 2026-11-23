@@ -1,0 +1,12 @@
+﻿queue_position,row_no,enrollment_id,student_email,course_code,status,created_date,duration_hours,format,source,review_priority,needs_contact,reasons,queue_reason
+1,5,EDU-202609-004,smirnova@example,QA-150,new,2026-09-16,24.0,online,invalid,high,True,invalid_enrollment_id; invalid_email; unknown_student,ошибки данных: идентификатор не соответствует шаблону EDU-ГГГГММ-9999; e-mail не соответствует формату; e-mail отсутствует в справочнике студентов
+2,9,EDU-202610-0008,,QA-150,new,2026-10-04,24.0,online,invalid,high,True,missing_field:student_email,ошибки данных: отсутствует обязательное поле: student_email
+3,12,EDU-202610-0011,belova@example.com,XX-999,enrolled,2026-10-07,10.0,online,invalid,high,False,unknown_course,ошибки данных: код курса отсутствует в справочнике курсов
+4,13,EDU-202610-0012,gusev@example.com,DA-200,paused,2026-10-08,48.0,offline,invalid,high,False,invalid_status,ошибки данных: недопустимый статус заявки
+5,14,EDU-202610-0013,titova@example.com,PY-100,enrolled,2026-10-08,-5.0,online,invalid,high,False,invalid_duration,ошибки данных: длительность должна быть числом от 1 до 500 часов
+6,16,edu-202610-0015,morozova@example.com,PY-100,new,2026-10-10,36.0,online,invalid,high,False,invalid_enrollment_id,ошибки данных: идентификатор не соответствует шаблону EDU-ГГГГММ-9999
+7,17,EDU-2026AA-0016,voronov@example.com,WD-300,new,2026-10-11,60.0,offline,invalid,high,False,invalid_enrollment_id,ошибки данных: идентификатор не соответствует шаблону EDU-ГГГГММ-9999
+8,18,EDU-202610-0017,pavlova@example,com,DA-200,on_review,,48,invalid,high,True,malformed_row,ошибки данных: число полей не совпадает с заголовком (неэкранированная запятая)
+9,6,EDU-202610-0005,kozlov@example.com,WD-300,on_review,2026-10-01,60.0,offline,valid,normal,False,,статус on_review требует решения оператора
+10,8,EDU-202610-0007,volkov@example.com,DA-200,on_review,2026-10-03,48.0,offline,valid,normal,False,,статус on_review требует решения оператора
+11,15,EDU-202610-0014,fedorov@example.com,QA-150,on_review,2026-10-09,24.0,online,valid,normal,False,,статус on_review требует решения оператора
