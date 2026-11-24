@@ -10,8 +10,10 @@ import unicodedata
 from datetime import datetime
 from typing import Any
 
+# re.ASCII: \d совпадает только с цифрами 0-9, а не с «чужими» цифрами Unicode
+# (например, арабско-индийскими), которые int() тоже умеет читать.
 ENROLLMENT_ID_RE = re.compile(
-    r"^(?P<prefix>EDU)-(?P<period>\d{6})-(?P<sequence>\d{4})$"
+    r"^(?P<prefix>EDU)-(?P<period>\d{6})-(?P<sequence>\d{4})$", re.ASCII
 )
 EMAIL_RE = re.compile(
     r"^(?P<local>[A-Za-z0-9._%+-]+)@"
@@ -19,9 +21,15 @@ EMAIL_RE = re.compile(
     r"(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*)"
     r"\.(?P<tld>[A-Za-z]{2,})$"
 )
-COURSE_CODE_RE = re.compile(r"^(?P<subject>[A-Z]{2})-(?P<level>\d{3})$")
-DATE_RE = re.compile(r"^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})$")
-QUOTED_RE = re.compile(r"(?P<quote>[\"'])\s*(?P<body>.*?)\s*(?P=quote)")
+COURSE_CODE_RE = re.compile(r"^(?P<subject>[A-Z]{2})-(?P<level>\d{3})$", re.ASCII)
+DATE_RE = re.compile(r"^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})$", re.ASCII)
+# Парные кавычки одного типа. Обратная ссылка (?P=quote) требует, чтобы
+# закрывающая кавычка совпала с открывающей. Условия (?<!\w) и (?!\w) не дают
+# принять за кавычки апостроф внутри слова (д'Артаньян).
+QUOTED_RE = re.compile(
+    r"(?<!\w)(?P<quote>[\"'])\s*(?P<body>.*?)\s*(?P=quote)(?!\w)"
+)
+GUILLEMETS_RE = re.compile(r"«\s*(?P<body>[^«»]*?)\s*»")
 QUOTED_FRAGMENT_RE = re.compile(r'("[^"]*")')
 
 VALID_STATUSES = {"new", "on_review", "enrolled", "completed", "cancelled"}
@@ -91,15 +99,19 @@ def normalize_spaces(line: str) -> str:
 def normalize_quotes(line: str) -> str:
     """Заменяет парные кавычки на двойные и убирает пробелы внутри них.
 
+    Приводятся к единому виду три стиля: «ёлочки», одинарные и двойные.
     Обратная ссылка (?P=quote) гарантирует, что открывающая и закрывающая
     кавычки относятся к одному типу. Незакрытая кавычка не совпадает
     с шаблоном и остаётся без изменений.
     """
+    line = GUILLEMETS_RE.sub(lambda m: f'"{m.group("body")}"', line)
     return QUOTED_RE.sub(lambda m: f'"{m.group("body")}"', line)
 
 
 def has_unbalanced_quotes(line: str) -> bool:
-    """Проверяет, что число открывающих и закрывающих кавычек каждого типа чётно."""
+    """Проверяет парность кавычек: чётное число " и ', поровну « и »."""
+    if line.count("«") != line.count("»"):
+        return True
     return any(line.count(quote) % 2 for quote in ('"', "'"))
 
 
@@ -129,7 +141,7 @@ def normalize_audit_line(line: str) -> str:
 
     Порядок правил важен:
     1) Unicode NFC и замена неразрывного пробела;
-    2) кавычки — пока границы фрагментов ещё видны;
+    2) кавычки («ёлочки», ' и ") — пока границы фрагментов ещё видны;
     3) пробелы — чтобы разделители стояли рядом с соседними токенами;
     4) разделители — только вне кавычек, чтобы не испортить,
        например, адрес "pavlova@example,com";
@@ -232,8 +244,11 @@ def normalize_enrollment(
         if not row.get(field):
             errors.append(f"missing_field:{field}")
 
+    # Пустое поле уже записано как missing_field, поэтому его формат
+    # не проверяется: иначе одна и та же проблема попала бы в отчёт дважды.
     enrollment_id = row.get("enrollment_id", "")
-    _append_unique(errors, validate_enrollment_id(enrollment_id))
+    if enrollment_id:
+        _append_unique(errors, validate_enrollment_id(enrollment_id))
 
     email = normalize_email(row.get("student_email", ""))
     row["student_email"] = email
@@ -251,18 +266,23 @@ def normalize_enrollment(
 
     status = normalize_status(row.get("status", ""))
     row["status"] = status
-    _append_unique(errors, validate_status(status))
+    if status:
+        _append_unique(errors, validate_status(status))
 
     study_format = normalize_format(row.get("format", ""))
     row["format"] = study_format
-    _append_unique(errors, validate_format(study_format))
+    if study_format:
+        _append_unique(errors, validate_format(study_format))
 
     created_date = row.get("created_date", "")
-    _append_unique(errors, validate_date(created_date))
+    if created_date:
+        _append_unique(errors, validate_date(created_date))
 
-    _append_unique(errors, validate_duration(row.get("duration_hours", "")))
-    if "invalid_duration" not in errors:
-        row["duration_hours"] = float(row["duration_hours"])
+    duration = row.get("duration_hours", "")
+    if duration:
+        _append_unique(errors, validate_duration(duration))
+        if "invalid_duration" not in errors:
+            row["duration_hours"] = float(duration)
 
     id_match = ENROLLMENT_ID_RE.fullmatch(enrollment_id)
     date_match = DATE_RE.fullmatch(created_date)

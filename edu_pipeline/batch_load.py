@@ -61,7 +61,13 @@ def count_demo(connection: sqlite3.Connection) -> int:
 
 
 def demo_rollback(connection: sqlite3.Connection) -> dict:
-    """Пакет с ошибкой в середине: ожидаем IntegrityError и пустую таблицу."""
+    """Пакет с ошибкой в середине: ожидаем IntegrityError и пустую таблицу.
+
+    Доказательство в два шага: перед откатом строки пакета ДОЛЖНЫ быть видны
+    внутри транзакции (иначе проверка «после отката 0» ничего не доказывает),
+    а после rollback их не должно остаться.
+    """
+    rows_inside = 0
     try:
         connection.execute("BEGIN")
         insert_many(connection, DEMO_BATCH)
@@ -73,12 +79,15 @@ def demo_rollback(connection: sqlite3.Connection) -> dict:
         connection.commit()
         error = "ошибки не было"
     except sqlite3.IntegrityError as exc:
+        rows_inside = count_demo(connection)  # до отката: вставленное ещё видно
         connection.rollback()
         error = str(exc)
 
     rows = count_demo(connection)
+    assert rows_inside == len(DEMO_BATCH), "Внутри транзакции не было вставленных строк"
     assert rows == 0, f"После rollback осталось {rows} строк"
-    return {"stage": "rollback", "error": error, "rows_after": rows}
+    return {"stage": "rollback", "error": error,
+            "rows_inside": rows_inside, "rows_after": rows}
 
 
 def demo_commit(connection: sqlite3.Connection) -> dict:
@@ -89,7 +98,7 @@ def demo_commit(connection: sqlite3.Connection) -> dict:
         insert_many(connection, DEMO_BATCH[1:])
         connection.commit()
         error = "нет"
-    except sqlite3.Error as exc:
+    except sqlite3.Error:
         connection.rollback()
         raise
 
@@ -123,16 +132,21 @@ def demo_real_db_rollback(db_path: Path = DB_PATH) -> dict:
                 ("EDU-209901-9999", student_email, course_code,
                  "new", "2099-01-01", 1.0, "online"),
             )
+            rows_inside = connection.execute(
+                "SELECT COUNT(*) FROM enrollments"
+            ).fetchone()[0]
             connection.rollback()  # намеренный откат
             error = "вставка отменена вручную"
         except sqlite3.Error as exc:
+            rows_inside = before
             connection.rollback()
             error = str(exc)
 
         after = connection.execute("SELECT COUNT(*) FROM enrollments").fetchone()[0]
+        assert rows_inside == before + 1, "Внутри транзакции вставка не была видна"
         assert before == after, "После rollback количество заявок изменилось"
         return {"stage": "edu.db rollback", "error": error, "rows_after": after,
-                "rows_before": before}
+                "rows_before": before, "rows_inside": rows_inside}
     finally:
         connection.close()
 
@@ -147,6 +161,8 @@ def write_protocol(results: list[dict], path: Path = PROTOCOL) -> None:
         lines.append(f"{index}. {result['stage']}")
         if "rows_before" in result:
             lines.append(f"   строк до опыта:   {result['rows_before']}")
+        if "rows_inside" in result:
+            lines.append(f"   внутри транзакции перед откатом: {result['rows_inside']}")
         lines.append(f"   сообщение:        {result['error']}")
         lines.append(f"   строк после:      {result['rows_after']}")
         lines.append("")

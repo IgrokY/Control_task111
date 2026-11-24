@@ -25,11 +25,13 @@ class TestInitialization(unittest.TestCase):
     """Создание объекта и проверка начальных значений."""
 
     def test_inheritance(self):
+        """Enrollment наследует TrackedEntity."""
         enrollment = make_enrollment()
         self.assertIsInstance(enrollment, TrackedEntity)
         self.assertTrue(issubclass(Enrollment, TrackedEntity))
 
     def test_initial_state(self):
+        """Новая заявка: статус new, длительность числом, журнал пуст."""
         enrollment = make_enrollment()
         self.assertEqual(enrollment.enrollment_id, "EDU-202610-0001")
         self.assertEqual(enrollment.status, "new")
@@ -37,6 +39,7 @@ class TestInitialization(unittest.TestCase):
         self.assertEqual(enrollment.history(), [])
 
     def test_values_are_normalized(self):
+        """E-mail приводится к нижнему регистру, код курса — к верхнему."""
         enrollment = make_enrollment(
             student_email=" IVANOV@Example.com ", course_code="py-100"
         )
@@ -44,6 +47,7 @@ class TestInitialization(unittest.TestCase):
         self.assertEqual(enrollment.course_code, "PY-100")
 
     def test_bad_initial_values_raise(self):
+        """Неверный статус, e-mail, код курса или длительность дают ValueError."""
         with self.assertRaises(ValueError):
             make_enrollment(status="unknown")
         with self.assertRaises(ValueError):
@@ -54,14 +58,22 @@ class TestInitialization(unittest.TestCase):
             make_enrollment(duration_hours=0)
 
     def test_empty_identifier_raises(self):
+        """Пустой идентификатор запрещён."""
         with self.assertRaises(ValueError):
             make_enrollment(enrollment_id="")
+
+    def test_bad_identifier_format_raises(self):
+        """Идентификатор не по шаблону EDU-ГГГГММ-9999 или None запрещён."""
+        for bad_id in ("abc", "edu-202610-0001", "EDU-202610-001", None):
+            with self.assertRaises(ValueError):
+                make_enrollment(enrollment_id=bad_id)
 
 
 class TestStatusTransitions(unittest.TestCase):
     """Схема переходов статуса."""
 
     def test_allowed_chain(self):
+        """Цепочка new -> on_review -> enrolled -> completed проходит и пишется в журнал."""
         enrollment = make_enrollment()
         enrollment.status = "on_review"
         enrollment.status = "enrolled"
@@ -70,12 +82,14 @@ class TestStatusTransitions(unittest.TestCase):
         self.assertEqual(len(enrollment.history()), 3)
 
     def test_skip_status_is_forbidden(self):
+        """Перепрыгнуть через статус нельзя: статус остаётся прежним."""
         enrollment = make_enrollment()
         with self.assertRaises(ValueError):
             enrollment.status = "completed"
         self.assertEqual(enrollment.status, "new")
 
     def test_terminal_status_is_final(self):
+        """Из терминального статуса выхода нет."""
         enrollment = make_enrollment(status="cancelled")
         self.assertEqual(ALLOWED_TRANSITIONS["cancelled"], frozenset())
         with self.assertRaises(ValueError):
@@ -83,11 +97,13 @@ class TestStatusTransitions(unittest.TestCase):
         self.assertEqual(enrollment.status, "cancelled")
 
     def test_unknown_status_raises(self):
+        """Неизвестный статус отклоняется."""
         enrollment = make_enrollment()
         with self.assertRaises(ValueError):
             enrollment.status = "deleted"
 
     def test_same_status_does_not_add_record(self):
+        """Повтор того же статуса не создаёт запись в журнале."""
         enrollment = make_enrollment(status="on_review")
         enrollment.status = "on_review"
         self.assertEqual(enrollment.history(), [])
@@ -97,6 +113,7 @@ class TestHistory(unittest.TestCase):
     """Содержимое журнала и защита копией."""
 
     def test_record_fields(self):
+        """Запись журнала содержит время, поле, старое и новое значение."""
         enrollment = make_enrollment(status="on_review")
         enrollment.status = "enrolled"
         record = enrollment.history()[0]
@@ -107,6 +124,7 @@ class TestHistory(unittest.TestCase):
         self.assertIsInstance(record["at"], str)
 
     def test_history_returns_copy(self):
+        """history() возвращает копию: clear() и append() снаружи не портят журнал."""
         enrollment = make_enrollment(status="on_review")
         enrollment.status = "enrolled"
         copy = enrollment.history()
@@ -116,6 +134,7 @@ class TestHistory(unittest.TestCase):
         self.assertEqual(enrollment.history()[0]["new"], "enrolled")
 
     def test_history_records_are_independent(self):
+        """Записи в копии журнала независимы от настоящих записей."""
         enrollment = make_enrollment(status="on_review")
         enrollment.status = "enrolled"
         copy = enrollment.history()
@@ -123,6 +142,7 @@ class TestHistory(unittest.TestCase):
         self.assertEqual(enrollment.history()[0]["new"], "enrolled")
 
     def test_each_object_has_own_history(self):
+        """У каждой заявки собственный журнал."""
         first = make_enrollment(status="on_review")
         second = make_enrollment(
             enrollment_id="EDU-202610-0002",
@@ -139,6 +159,7 @@ class TestDurationAndReadOnly(unittest.TestCase):
     """Изменение длительности и защита идентификатора."""
 
     def test_duration_change_is_logged(self):
+        """Изменение длительности попадает в журнал."""
         enrollment = make_enrollment()
         enrollment.duration_hours = 40
         self.assertEqual(enrollment.duration_hours, 40.0)
@@ -148,6 +169,7 @@ class TestDurationAndReadOnly(unittest.TestCase):
         self.assertEqual(record["new"], 40.0)
 
     def test_bad_duration_raises(self):
+        """Длительность вне диапазона или не число отклоняется."""
         enrollment = make_enrollment()
         for value in (0, -1, 501, "abc", None):
             with self.assertRaises(ValueError):
@@ -155,6 +177,7 @@ class TestDurationAndReadOnly(unittest.TestCase):
         self.assertEqual(enrollment.duration_hours, 36.0)
 
     def test_identifier_and_email_are_read_only(self):
+        """Идентификатор и e-mail нельзя заменить напрямую."""
         enrollment = make_enrollment()
         with self.assertRaises(AttributeError):
             enrollment.enrollment_id = "FAKE"
@@ -162,6 +185,7 @@ class TestDurationAndReadOnly(unittest.TestCase):
             enrollment.student_email = "fake@example.com"
 
     def test_to_dict(self):
+        """to_dict() отдаёт текущее состояние заявки."""
         enrollment = make_enrollment(status="on_review")
         self.assertEqual(
             enrollment.to_dict(),

@@ -81,9 +81,12 @@ class Enrollment(TrackedEntity):
     ) -> None:
         """Создаёт заявку и проверяет все начальные значения.
 
+        Идентификатор проверяется тем же шаблоном, что и в ETL (validators.py).
         Начальный статус проверяется по белому списку, но в журнал не пишется:
         журнал описывает изменения, а не исходное состояние.
         """
+        if validators.validate_enrollment_id(enrollment_id):
+            raise ValueError(f"Недопустимый идентификатор заявки: {enrollment_id!r}")
         super().__init__(enrollment_id)
         self._student_email = self._check_email(student_email)
         self._course_code = self._check_course_code(course_code)

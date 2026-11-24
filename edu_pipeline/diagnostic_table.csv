@@ -2,4 +2,5 @@
 names_utf8.txt,232,UTF-8 BOM,да,нет (character maps to <undefined> на позиции 4),utf-8-sig,True,эталон
 names_cp1251.txt,122,нет,нет (invalid continuation byte на позиции 0),да,cp1251,True,кандидат на сверку
 names_cp1251.txt (прочитан как latin-1),122,нет,нет,да,latin-1 (ошибочно),False,mojibake; обратное latin-1 -> cp1251 восстанавливает текст
-names_cp1251.txt (прочитан как utf-8),122,нет,нет (invalid start byte),да,utf-8 (ошибочно),False,UnicodeDecodeError — файл не читается совсем
+names_cp1251.txt (прочитан как utf-8),122,нет,нет (invalid continuation byte на позиции 0),да,utf-8 (ошибочно),False,UnicodeDecodeError — файл не читается совсем
+"names_utf8.txt (прочитан как utf-8, не utf-8-sig)",232,UTF-8 BOM,да,нет,utf-8 (BOM остался в тексте),False,первый символ '\ufeff': невидимый BOM ломает сравнение

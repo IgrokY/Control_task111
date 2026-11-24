@@ -1,62 +1,131 @@
 КОМАНДА: python -m unittest discover -v
 ============================================================
-test_bad_duration_raises (test_enrollment.TestDurationAndReadOnly) ... ok
-test_duration_change_is_logged (test_enrollment.TestDurationAndReadOnly) ... ok
-test_identifier_and_email_are_read_only (test_enrollment.TestDurationAndReadOnly) ... ok
-test_to_dict (test_enrollment.TestDurationAndReadOnly) ... ok
-test_each_object_has_own_history (test_enrollment.TestHistory) ... ok
-test_history_records_are_independent (test_enrollment.TestHistory) ... ok
-test_history_returns_copy (test_enrollment.TestHistory) ... ok
-test_record_fields (test_enrollment.TestHistory) ... ok
-test_bad_initial_values_raise (test_enrollment.TestInitialization) ... ok
-test_empty_identifier_raises (test_enrollment.TestInitialization) ... ok
-test_inheritance (test_enrollment.TestInitialization) ... ok
-test_initial_state (test_enrollment.TestInitialization) ... ok
-test_values_are_normalized (test_enrollment.TestInitialization) ... ok
-test_allowed_chain (test_enrollment.TestStatusTransitions) ... ok
-test_same_status_does_not_add_record (test_enrollment.TestStatusTransitions) ... ok
-test_skip_status_is_forbidden (test_enrollment.TestStatusTransitions) ... ok
-test_terminal_status_is_final (test_enrollment.TestStatusTransitions) ... ok
-test_unknown_status_raises (test_enrollment.TestStatusTransitions) ... ok
-test_bug_empty_rows_break_average (test_report.TestBuggyReportReproduction) ... ok
-test_bug_find_by_status_mutates_input (test_report.TestBuggyReportReproduction) ... ok
-test_bug_null_duration_breaks_average (test_report.TestBuggyReportReproduction) ... ok
-test_bug_report_line_fails_on_non_string (test_report.TestBuggyReportReproduction) ... ok
-test_bug_top_courses_is_ascending (test_report.TestBuggyReportReproduction) ... ok
-test_average_all_null_returns_zero (test_report.TestFixedReport) ... ok
-test_average_empty_returns_zero (test_report.TestFixedReport) ... ok
-test_average_skips_null (test_report.TestFixedReport) ... ok
-test_find_by_status_does_not_mutate (test_report.TestFixedReport) ... ok
-test_load_closes_connection (test_report.TestFixedReport) ... ok
-test_load_enrollments_from_sqlite (test_report.TestFixedReport) ... ok
-test_report_line_handles_numbers_and_none (test_report.TestFixedReport) ... ok
-test_top_courses_is_descending (test_report.TestFixedReport) ... ok
-test_top_courses_tie_is_deterministic (test_report.TestFixedReport) ... ok
-test_all_errors_collected_not_only_first (test_validators.TestEnrollmentValidation) ... ok
-test_malformed_row_has_reason_message (test_validators.TestEnrollmentValidation) ... ok
-test_missing_field (test_validators.TestEnrollmentValidation) ... ok
-test_period_date_mismatch (test_validators.TestEnrollmentValidation) ... ok
-test_reason_messages_are_human_readable (test_validators.TestEnrollmentValidation) ... ok
-test_unknown_references (test_validators.TestEnrollmentValidation) ... ok
-test_valid_row_normalizes_values (test_validators.TestEnrollmentValidation) ... ok
-test_course_code (test_validators.TestIdentifiers) ... ok
-test_enrollment_id_named_groups (test_validators.TestIdentifiers) ... ok
-test_enrollment_id_rejects_lowercase_and_short_sequence (test_validators.TestIdentifiers) ... ok
-test_comma_inside_quotes_is_preserved (test_validators.TestNormalization) ... ok
-test_empty_and_whitespace_lines (test_validators.TestNormalization) ... ok
-test_full_audit_line (test_validators.TestNormalization) ... ok
-test_quote_backreference_replaces_pair (test_validators.TestNormalization) ... ok
-test_separators_collapse (test_validators.TestNormalization) ... ok
-test_spaces_collapse (test_validators.TestNormalization) ... ok
-test_unbalanced_quote_is_not_changed (test_validators.TestNormalization) ... ok
-test_real_batch_gives_ten_unique_valid_rows (test_validators.TestRealFiles) ... ok
-test_reference_files_are_readable (test_validators.TestRealFiles) ... ok
-test_date_format_and_calendar (test_validators.TestSimpleFields) ... ok
-test_duration_boundaries (test_validators.TestSimpleFields) ... ok
-test_email (test_validators.TestSimpleFields) ... ok
-test_status_and_format (test_validators.TestSimpleFields) ... ok
+test_bad_duration_raises (test_enrollment.TestDurationAndReadOnly.test_bad_duration_raises)
+Длительность вне диапазона или не число отклоняется. ... ok
+test_duration_change_is_logged (test_enrollment.TestDurationAndReadOnly.test_duration_change_is_logged)
+Изменение длительности попадает в журнал. ... ok
+test_identifier_and_email_are_read_only (test_enrollment.TestDurationAndReadOnly.test_identifier_and_email_are_read_only)
+Идентификатор и e-mail нельзя заменить напрямую. ... ok
+test_to_dict (test_enrollment.TestDurationAndReadOnly.test_to_dict)
+to_dict() отдаёт текущее состояние заявки. ... ok
+test_each_object_has_own_history (test_enrollment.TestHistory.test_each_object_has_own_history)
+У каждой заявки собственный журнал. ... ok
+test_history_records_are_independent (test_enrollment.TestHistory.test_history_records_are_independent)
+Записи в копии журнала независимы от настоящих записей. ... ok
+test_history_returns_copy (test_enrollment.TestHistory.test_history_returns_copy)
+history() возвращает копию: clear() и append() снаружи не портят журнал. ... ok
+test_record_fields (test_enrollment.TestHistory.test_record_fields)
+Запись журнала содержит время, поле, старое и новое значение. ... ok
+test_bad_identifier_format_raises (test_enrollment.TestInitialization.test_bad_identifier_format_raises)
+Идентификатор не по шаблону EDU-ГГГГММ-9999 или None запрещён. ... ok
+test_bad_initial_values_raise (test_enrollment.TestInitialization.test_bad_initial_values_raise)
+Неверный статус, e-mail, код курса или длительность дают ValueError. ... ok
+test_empty_identifier_raises (test_enrollment.TestInitialization.test_empty_identifier_raises)
+Пустой идентификатор запрещён. ... ok
+test_inheritance (test_enrollment.TestInitialization.test_inheritance)
+Enrollment наследует TrackedEntity. ... ok
+test_initial_state (test_enrollment.TestInitialization.test_initial_state)
+Новая заявка: статус new, длительность числом, журнал пуст. ... ok
+test_values_are_normalized (test_enrollment.TestInitialization.test_values_are_normalized)
+E-mail приводится к нижнему регистру, код курса — к верхнему. ... ok
+test_allowed_chain (test_enrollment.TestStatusTransitions.test_allowed_chain)
+Цепочка new -> on_review -> enrolled -> completed проходит и пишется в журнал. ... ok
+test_same_status_does_not_add_record (test_enrollment.TestStatusTransitions.test_same_status_does_not_add_record)
+Повтор того же статуса не создаёт запись в журнале. ... ok
+test_skip_status_is_forbidden (test_enrollment.TestStatusTransitions.test_skip_status_is_forbidden)
+Перепрыгнуть через статус нельзя: статус остаётся прежним. ... ok
+test_terminal_status_is_final (test_enrollment.TestStatusTransitions.test_terminal_status_is_final)
+Из терминального статуса выхода нет. ... ok
+test_unknown_status_raises (test_enrollment.TestStatusTransitions.test_unknown_status_raises)
+Неизвестный статус отклоняется. ... ok
+test_bug_empty_rows_break_average (test_report.TestBuggyReportReproduction.test_bug_empty_rows_break_average)
+Дефект 2: исходный модуль делит на ноль на пустом наборе. ... ok
+test_bug_find_by_status_mutates_input (test_report.TestBuggyReportReproduction.test_bug_find_by_status_mutates_input)
+Дефект 4: исходный find_by_status сортирует список вызывающего кода. ... ok
+test_bug_load_enrollments_never_closes_connection (test_report.TestBuggyReportReproduction.test_bug_load_enrollments_never_closes_connection)
+Дефект 6: исходный load_enrollments не закрывает соединение. ... ok
+test_bug_null_duration_breaks_average (test_report.TestBuggyReportReproduction.test_bug_null_duration_breaks_average)
+Дефект 1: исходный модуль падает на NULL (TypeError). ... ok
+test_bug_report_line_fails_on_non_string (test_report.TestBuggyReportReproduction.test_bug_report_line_fails_on_non_string)
+Дефект 5: исходный report_line падает на не-строке. ... ok
+test_bug_top_courses_is_ascending (test_report.TestBuggyReportReproduction.test_bug_top_courses_is_ascending)
+Дефект 3: исходный top_courses возвращает худшие курсы. ... ok
+test_average_all_null_returns_zero (test_report.TestFixedReport.test_average_all_null_returns_zero)
+Набор из одних NULL даёт 0.0. ... ok
+test_average_empty_returns_zero (test_report.TestFixedReport.test_average_empty_returns_zero)
+Пустой набор даёт 0.0, а не ZeroDivisionError. ... ok
+test_average_skips_null (test_report.TestFixedReport.test_average_skips_null)
+NULL в длительности пропускается, среднее считается по остальным. ... ok
+test_find_by_status_does_not_mutate (test_report.TestFixedReport.test_find_by_status_does_not_mutate)
+find_by_status не меняет порядок исходного списка. ... ok
+test_load_closes_connection (test_report.TestFixedReport.test_load_closes_connection)
+Соединение с базой закрывается после чтения. ... ok
+test_load_closes_connection_on_error (test_report.TestFixedReport.test_load_closes_connection_on_error)
+Соединение закрывается даже при ошибке запроса. ... ok
+test_load_enrollments_from_sqlite (test_report.TestFixedReport.test_load_enrollments_from_sqlite)
+Чтение из настоящей временной базы SQLite. ... ok
+test_report_line_handles_numbers_and_none (test_report.TestFixedReport.test_report_line_handles_numbers_and_none)
+Число и None в идентификаторе не ломают строку отчёта. ... ok
+test_top_courses_is_descending (test_report.TestFixedReport.test_top_courses_is_descending)
+Топ курсов идёт по убыванию числа заявок. ... ok
+test_top_courses_tie_is_deterministic (test_report.TestFixedReport.test_top_courses_tie_is_deterministic)
+При равенстве числа заявок порядок задаёт код курса. ... ok
+test_all_errors_collected_not_only_first (test_validators.TestEnrollmentValidation.test_all_errors_collected_not_only_first)
+Собираются все ошибки строки, а не только первая. ... ok
+test_empty_field_is_reported_once (test_validators.TestEnrollmentValidation.test_empty_field_is_reported_once)
+Пустое поле не дублируется ошибкой формата. ... ok
+test_malformed_row_has_reason_message (test_validators.TestEnrollmentValidation.test_malformed_row_has_reason_message)
+У строки с лишней запятой есть понятная причина. ... ok
+test_missing_field (test_validators.TestEnrollmentValidation.test_missing_field)
+Пустое обязательное поле даёт missing_field. ... ok
+test_period_date_mismatch (test_validators.TestEnrollmentValidation.test_period_date_mismatch)
+Период в идентификаторе должен совпадать с датой создания. ... ok
+test_reason_messages_are_human_readable (test_validators.TestEnrollmentValidation.test_reason_messages_are_human_readable)
+Коды причин превращаются в понятный текст. ... ok
+test_unknown_references (test_validators.TestEnrollmentValidation.test_unknown_references)
+E-mail и курс, которых нет в справочниках, отклоняются. ... ok
+test_valid_row_normalizes_values (test_validators.TestEnrollmentValidation.test_valid_row_normalizes_values)
+Корректная строка нормализуется без ошибок. ... ok
+test_course_code (test_validators.TestIdentifiers.test_course_code)
+Код курса: PY-100 верен, PY100 — нет. ... ok
+test_enrollment_id_named_groups (test_validators.TestIdentifiers.test_enrollment_id_named_groups)
+Идентификатор разбирается на именованные группы. ... ok
+test_enrollment_id_rejects_lowercase_and_short_sequence (test_validators.TestIdentifiers.test_enrollment_id_rejects_lowercase_and_short_sequence)
+Строчный префикс, короткий номер и буквы в периоде отклоняются. ... ok
+test_enrollment_id_rejects_non_ascii_digits (test_validators.TestIdentifiers.test_enrollment_id_rejects_non_ascii_digits)
+Цифры других алфавитов не принимаются за цифры идентификатора. ... ok
+test_apostrophe_inside_word_is_not_a_quote (test_validators.TestNormalization.test_apostrophe_inside_word_is_not_a_quote)
+Апостроф внутри слова не считается кавычкой. ... ok
+test_comma_inside_quotes_is_preserved (test_validators.TestNormalization.test_comma_inside_quotes_is_preserved)
+Запятая внутри кавычек не считается разделителем. ... ok
+test_empty_and_whitespace_lines (test_validators.TestNormalization.test_empty_and_whitespace_lines)
+Пустая строка и строка из пробелов дают пустой результат. ... ok
+test_full_audit_line (test_validators.TestNormalization.test_full_audit_line)
+Полная строка журнала нормализуется целиком. ... ok
+test_guillemets_become_double_quotes (test_validators.TestNormalization.test_guillemets_become_double_quotes)
+«Ёлочки» приводятся к двойным кавычкам. ... ok
+test_quote_backreference_replaces_pair (test_validators.TestNormalization.test_quote_backreference_replaces_pair)
+Парные кавычки одного типа заменяются двойными (обратная ссылка). ... ok
+test_separators_collapse (test_validators.TestNormalization.test_separators_collapse)
+Повторные разделители схлопываются в один. ... ok
+test_spaces_collapse (test_validators.TestNormalization.test_spaces_collapse)
+Повторные пробелы и табуляции схлопываются в один пробел. ... ok
+test_unbalanced_quote_is_not_changed (test_validators.TestNormalization.test_unbalanced_quote_is_not_changed)
+Незакрытая кавычка остаётся как есть и помечается. ... ok
+test_real_batch_gives_ten_unique_valid_rows (test_validators.TestRealFiles.test_real_batch_gives_ten_unique_valid_rows)
+Реальный файл заявок даёт ровно 10 корректных строк. ... ok
+test_reference_files_are_readable (test_validators.TestRealFiles.test_reference_files_are_readable)
+Справочники из data/final читаются: 16 студентов, 5 курсов. ... ok
+test_date_format_and_calendar (test_validators.TestSimpleFields.test_date_format_and_calendar)
+Дата проверяется по формату и по календарю (високосный год). ... ok
+test_duration_boundaries (test_validators.TestSimpleFields.test_duration_boundaries)
+Границы длительности: 1 и 500 верны; 0, 501, -5 и текст — нет. ... ok
+test_email (test_validators.TestSimpleFields.test_email)
+E-mail без домена верхнего уровня или с запятой отклоняется. ... ok
+test_status_and_format (test_validators.TestSimpleFields.test_status_and_format)
+Статус и формат проверяются по белому списку. ... ok
 
 ----------------------------------------------------------------------
-Ran 55 tests in 0.016s
+Ran 62 tests in 0.009s
 
 OK

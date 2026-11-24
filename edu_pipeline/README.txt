@@ -63,7 +63,7 @@
     студентов в справочнике ........ 16
     курсов в справочнике ........... 5
     строк в журнале audit_messy.log  8
-    контрольных примеров нормализации 11
+    контрольных примеров нормализации 13
     записей в edu.db после ETL ..... 10
     оплаченных заявок .............. 6
     выручка ........................ 332 000 руб.
@@ -84,7 +84,7 @@
     validators.py               fullmatch, именованные группы, backreference
     normalize_audit.py          нормализация журнала
     before_after.csv            построчное сравнение
-    expected_actual.csv         таблица expected/actual (11 кейсов)
+    expected_actual.csv         таблица expected/actual (13 кейсов)
 
 Этап 4. База данных и транзакции
     create_db.py                схема, индексы, справочники
@@ -96,7 +96,7 @@
 
 Этап 5. ETL и обмен данными
     etl_import.py               Extract -> Validate -> Load
-    rejected_enrollments.csv    9 отклонённых строк с причинами
+    rejected_enrollments.csv    9 отклонённых строк с причинами (+ extra_fields)
     etl_report.txt              контрольный отчёт и два прохода загрузки
     export_data.py              JSON/XML + безопасный разбор ответов
     report.json                 выгрузка для системы A
@@ -109,11 +109,11 @@
     class_diagram.md            диаграмма классов и переходы статусов
 
 Этап 7. Тесты, отладка и кодировки
-    test_validators.py          23 теста валидации и нормализации
-    test_enrollment.py          18 тестов класса Enrollment
+    test_validators.py          27 тестов валидации и нормализации
+    test_enrollment.py          19 тестов класса Enrollment
     fixed_report.py             исправленный модуль отчётности
-    test_report.py              регрессионные тесты + воспроизведение багов
-    test_run.txt                лог зелёного прогона (55 тестов, OK)
+    test_report.py              16 тестов: регрессия + воспроизведение багов
+    test_run.txt                лог зелёного прогона (62 теста, OK)
     incident_report.md          разбор 6 дефектов buggy_report.py
     performance_bench.py        timeit-сравнение
     performance.txt             протокол замеров
@@ -163,7 +163,7 @@
 ------------------------------------------------------------------------
     python -m unittest discover -v
 
-Ожидаемый результат: 55 тестов, OK. Тесты не изменяют рабочие файлы:
+Ожидаемый результат: 62 теста, OK. Тесты не изменяют рабочие файлы:
 используются временные каталоги и базы :memory:.
 
 11. АВТОР

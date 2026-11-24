@@ -1,10 +1,10 @@
-﻿row_no,enrollment_id,student_email,course_code,status,created_date,duration_hours,format,errors,reason
-5,EDU-202609-004,smirnova@example,QA-150,new,2026-09-16,24,online,invalid_enrollment_id; invalid_email; unknown_student,идентификатор не соответствует шаблону EDU-ГГГГММ-9999; e-mail не соответствует формату; e-mail отсутствует в справочнике студентов
-9,EDU-202610-0008,,QA-150,new,2026-10-04,24,online,missing_field:student_email,отсутствует обязательное поле: student_email
-12,EDU-202610-0011,belova@example.com,XX-999,enrolled,2026-10-07,10,online,unknown_course,код курса отсутствует в справочнике курсов
-13,EDU-202610-0012,gusev@example.com,DA-200,paused,2026-10-08,48,offline,invalid_status,недопустимый статус заявки
-14,EDU-202610-0013,titova@example.com,PY-100,enrolled,2026-10-08,-5,online,invalid_duration,длительность должна быть числом от 1 до 500 часов
-16,edu-202610-0015,morozova@example.com,PY-100,new,2026-10-10,36,online,invalid_enrollment_id,идентификатор не соответствует шаблону EDU-ГГГГММ-9999
-17,EDU-2026AA-0016,voronov@example.com,WD-300,new,2026-10-11,60,offline,invalid_enrollment_id,идентификатор не соответствует шаблону EDU-ГГГГММ-9999
-18,EDU-202610-0017,pavlova@example,com,DA-200,on_review,2026-10-12,48,malformed_row,число полей не совпадает с заголовком (неэкранированная запятая)
-20,EDU-202610-0006,smirnova@example.com,PY-100,enrolled,2026-10-02,36,online,duplicate_enrollment_id,идентификатор заявки уже встречался в пакете
+﻿row_no,enrollment_id,student_email,course_code,status,created_date,duration_hours,format,extra_fields,errors,reason
+5,EDU-202609-004,smirnova@example,QA-150,new,2026-09-16,24,online,,invalid_enrollment_id; invalid_email; unknown_student,идентификатор не соответствует шаблону EDU-ГГГГММ-9999; e-mail не соответствует формату; e-mail отсутствует в справочнике студентов
+9,EDU-202610-0008,,QA-150,new,2026-10-04,24,online,,missing_field:student_email,отсутствует обязательное поле: student_email
+12,EDU-202610-0011,belova@example.com,XX-999,enrolled,2026-10-07,10,online,,unknown_course,код курса отсутствует в справочнике курсов
+13,EDU-202610-0012,gusev@example.com,DA-200,paused,2026-10-08,48,offline,,invalid_status,недопустимый статус заявки
+14,EDU-202610-0013,titova@example.com,PY-100,enrolled,2026-10-08,-5,online,,invalid_duration,длительность должна быть числом от 1 до 500 часов
+16,edu-202610-0015,morozova@example.com,PY-100,new,2026-10-10,36,online,,invalid_enrollment_id,идентификатор не соответствует шаблону EDU-ГГГГММ-9999
+17,EDU-2026AA-0016,voronov@example.com,WD-300,new,2026-10-11,60,offline,,invalid_enrollment_id,идентификатор не соответствует шаблону EDU-ГГГГММ-9999
+18,EDU-202610-0017,pavlova@example,com,DA-200,on_review,2026-10-12,48,offline,malformed_row,число полей не совпадает с заголовком (неэкранированная запятая)
+20,EDU-202610-0006,smirnova@example.com,PY-100,enrolled,2026-10-02,36,online,,duplicate_enrollment_id,идентификатор заявки уже встречался в пакете

@@ -133,13 +133,33 @@ def mojibake_demo() -> list[dict]:
             "file": "names_cp1251.txt (прочитан как utf-8)",
             "size_bytes": len(data),
             "has_bom": detect_bom(data) or "нет",
-            "utf8_decodes": "нет (invalid start byte)",
+            "utf8_decodes": f"нет ({utf8_error})",
             "cp1251_decodes": "да",
             "chosen_encoding": "utf-8 (ошибочно)",
             "equals_reference": False,
             "note": "UnicodeDecodeError — файл не читается совсем",
         },
     ]
+
+
+def bom_demo() -> dict:
+    """Показывает ловушку BOM: чтение как utf-8 (не utf-8-sig) оставляет U+FEFF.
+
+    Сравнение «в лоб» с эталоном даёт False, хотя имена те же: невидимый символ
+    в начале строки портит и сравнение, и заголовок CSV.
+    """
+    data = read_bytes(UTF8_FILE)
+    raw_text = data.decode("utf-8")  # намеренно не utf-8-sig
+    return {
+        "file": "names_utf8.txt (прочитан как utf-8, не utf-8-sig)",
+        "size_bytes": len(data),
+        "has_bom": detect_bom(data) or "нет",
+        "utf8_decodes": "да",
+        "cp1251_decodes": "нет",
+        "chosen_encoding": "utf-8 (BOM остался в тексте)",
+        "equals_reference": raw_text == reference_text(),
+        "note": f"первый символ {raw_text[0]!r}: невидимый BOM ломает сравнение",
+    }
 
 
 def write_table(rows: list[dict], path: Path = TABLE) -> None:
@@ -152,10 +172,10 @@ def write_table(rows: list[dict], path: Path = TABLE) -> None:
 
 def print_table(rows: list[dict]) -> None:
     """Печатает таблицу в консоль в сокращённом виде."""
-    print(f"\n{'файл':<38}{'байт':>5} {'BOM':<11}{'кодировка':<12}совпало")
+    print(f"\n{'файл':<52}{'байт':>5} {'BOM':<11}{'кодировка':<30}совпало")
     for row in rows:
-        print(f"{row['file']:<38}{row['size_bytes']:>5} {row['has_bom']:<11}"
-              f"{row['chosen_encoding']:<12}{row['equals_reference']}")
+        print(f"{row['file']:<52}{row['size_bytes']:>5} {row['has_bom']:<11}"
+              f"{row['chosen_encoding']:<30}{row['equals_reference']}")
 
 
 def main() -> None:
@@ -166,6 +186,7 @@ def main() -> None:
         diagnose_file(CP1251_FILE, reference),
     ]
     rows.extend(mojibake_demo())
+    rows.append(bom_demo())
 
     print_table(rows)
     write_table(rows)
@@ -181,7 +202,8 @@ def main() -> None:
     assert cp_row["equals_reference"] is True, "CP1251 не совпал с эталоном"
     assert cp_row["has_bom"] == "нет", "В CP1251 файле не должно быть BOM"
     assert rows[2]["equals_reference"] is False, "Ошибочное чтение не должно совпадать"
-    assert rows[3]["equals_reference"] is False, "Чтение UTF-8 как CP1251 должно ломаться"
+    assert rows[3]["equals_reference"] is False, "Чтение CP1251 как UTF-8 должно ломаться"
+    assert rows[4]["equals_reference"] is False, "BOM в тексте должен ломать сравнение"
 
 
 if __name__ == "__main__":

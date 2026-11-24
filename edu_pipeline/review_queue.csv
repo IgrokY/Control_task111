@@ -6,7 +6,7 @@
 5,14,EDU-202610-0013,titova@example.com,PY-100,enrolled,2026-10-08,-5.0,online,invalid,high,False,invalid_duration,ошибки данных: длительность должна быть числом от 1 до 500 часов
 6,16,edu-202610-0015,morozova@example.com,PY-100,new,2026-10-10,36.0,online,invalid,high,False,invalid_enrollment_id,ошибки данных: идентификатор не соответствует шаблону EDU-ГГГГММ-9999
 7,17,EDU-2026AA-0016,voronov@example.com,WD-300,new,2026-10-11,60.0,offline,invalid,high,False,invalid_enrollment_id,ошибки данных: идентификатор не соответствует шаблону EDU-ГГГГММ-9999
-8,18,EDU-202610-0017,pavlova@example,com,DA-200,on_review,,48,invalid,high,True,malformed_row,ошибки данных: число полей не совпадает с заголовком (неэкранированная запятая)
+8,18,EDU-202610-0017,,,,,,,invalid,high,True,malformed_row,ошибки данных: число полей не совпадает с заголовком (неэкранированная запятая)
 9,6,EDU-202610-0005,kozlov@example.com,WD-300,on_review,2026-10-01,60.0,offline,valid,normal,False,,статус on_review требует решения оператора
 10,8,EDU-202610-0007,volkov@example.com,DA-200,on_review,2026-10-03,48.0,offline,valid,normal,False,,статус on_review требует решения оператора
 11,15,EDU-202610-0014,fedorov@example.com,QA-150,on_review,2026-10-09,24.0,online,valid,normal,False,,статус on_review требует решения оператора

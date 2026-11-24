@@ -101,7 +101,11 @@ def validate_source(
     for number, row, extra in raw_rows:
         if extra:
             # Поля сдвинуты, поэтому проверять их по отдельности бессмысленно.
-            rejected.append((number, row, ["malformed_row"]))
+            # Лишние значения сохраняем в extra_fields, чтобы строку можно было
+            # вернуть отправителю целиком, без потери данных.
+            rejected.append(
+                (number, {**row, "extra_fields": "|".join(extra)}, ["malformed_row"])
+            )
             continue
 
         normalized, errors = validators.normalize_enrollment(row, students, courses)
@@ -148,14 +152,19 @@ def load_accepted(connection, accepted: list[tuple]) -> tuple[int, int]:
 
 
 def write_rejected(rejected: list[tuple], path: Path = REJECTED) -> None:
-    """Пишет отклонённые строки в CSV: номер, исходные поля, коды и текст причин."""
+    """Пишет отклонённые строки в CSV: номер, исходные поля, коды и текст причин.
+
+    Столбец extra_fields заполнен только у строк с лишней запятой: в нём лежат
+    значения, которые не поместились в колонки заголовка.
+    """
     with path.open("w", encoding="utf-8-sig", newline="") as target:
-        fieldnames = ["row_no", *ENROLLMENT_COLUMNS, "errors", "reason"]
+        fieldnames = ["row_no", *ENROLLMENT_COLUMNS, "extra_fields", "errors", "reason"]
         writer = csv.DictWriter(target, fieldnames=fieldnames)
         writer.writeheader()
         for number, row, errors in rejected:
             record = {column: row.get(column, "") for column in ENROLLMENT_COLUMNS}
             record["row_no"] = number
+            record["extra_fields"] = row.get("extra_fields", "")
             record["errors"] = "; ".join(errors)
             record["reason"] = validators.describe_reasons(errors)
             writer.writerow(record)

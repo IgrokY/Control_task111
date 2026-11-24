@@ -55,9 +55,11 @@ def bench_counters(context: dict) -> dict:
         codes.extend(errors or ["status_review"])
 
     def with_counter():
+        """Подсчёт через Counter."""
         return Counter(codes)
 
     def with_dict():
+        """Ручной подсчёт через dict.get."""
         result = {}
         for code in codes:
             result[code] = result.get(code, 0) + 1
@@ -75,11 +77,13 @@ def bench_queues(size: int = 1000) -> dict:
     items = [{"id": index} for index in range(size)]
 
     def with_deque():
+        """Снятие с головы очереди через deque.popleft()."""
         queue = deque(items)
         while queue:
             queue.popleft()
 
     def with_list():
+        """Снятие с головы очереди через list.pop(0)."""
         queue = list(items)
         while queue:
             queue.pop(0)

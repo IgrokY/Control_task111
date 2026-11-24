@@ -83,7 +83,9 @@ def prepare_context(
 
     for number, row, extra in raw_rows:
         if extra:
-            rows[number] = row
+            # Поля сдвинуты (лишняя запятая), поэтому «курс», «статус» и дата
+            # в такой строке недостоверны. В очередь берём только идентификатор.
+            rows[number] = {"enrollment_id": row.get("enrollment_id", "")}
             issues[number] = ["malformed_row"]
             continue
         normalized, errors = validators.normalize_enrollment(row, students, courses)
@@ -180,10 +182,14 @@ def process_queue(queue: deque, limit: int = 5) -> tuple[list[dict], int]:
 
 
 def group_by_course(queue: list[dict]) -> defaultdict:
-    """defaultdict(list): группировка очереди по коду курса без проверки ключа."""
+    """defaultdict(list): группировка очереди по коду курса без проверки ключа.
+
+    Заявки, у которых курс определить нельзя (сломанная строка), попадают
+    в группу «(курс не определён)».
+    """
     groups = defaultdict(list)
     for item in queue:
-        groups[item["course_code"]].append(item)
+        groups[item["course_code"] or "(курс не определён)"].append(item)
     return groups
 
 
@@ -281,7 +287,7 @@ def main() -> None:
 
     print("\nОчередь по курсам (defaultdict):")
     for course, items in sorted(group_by_course(queue1).items()):
-        print(f"  {course:<10}{len(items)}")
+        print(f"  {course:<20}{len(items)}")
 
     processing = build_processing_queue(queue1)
     processed, left = process_queue(processing)
